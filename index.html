@@ -6,89 +6,126 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #ffffff;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f7f7 100%);
       color: #111;
-      text-align: center;
     }
 
-    .container {
+    .hero {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 30px;
+      text-align: center;
+      padding: 40px;
     }
 
     h1 {
-      font-size: 56px;
+      font-size: 64px;
       font-weight: 300;
-      letter-spacing: -1px;
+      letter-spacing: -2px;
+      margin: 0;
     }
 
     .date {
+      margin-top: 15px;
       letter-spacing: 6px;
-      margin-top: 10px;
-      color: #444;
+      color: #555;
     }
 
-    p {
+    .subtitle {
+      margin-top: 25px;
+      max-width: 500px;
       color: #666;
-      max-width: 420px;
       line-height: 1.6;
-      margin-top: 20px;
+      font-size: 16px;
     }
 
     .buttons {
-      margin-top: 30px;
+      margin-top: 40px;
       display: flex;
-      gap: 12px;
+      gap: 15px;
       flex-wrap: wrap;
       justify-content: center;
     }
 
-    button {
-      padding: 12px 26px;
-      border: 1px solid black;
+    .btn {
+      padding: 14px 28px;
+      border: 1px solid #111;
       background: white;
       cursor: pointer;
       font-size: 15px;
-      transition: 0.2s;
+      transition: 0.25s ease;
+      min-width: 160px;
     }
 
-    button:hover {
-      background: black;
+    .btn:hover {
+      background: #111;
       color: white;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 12px;
+      color: #999;
+      letter-spacing: 2px;
+    }
+
+    /* subtle fade-in */
+    .hero > * {
+      animation: fadeIn 1s ease forwards;
+      opacity: 0;
+    }
+
+    .hero h1 { animation-delay: 0.2s; }
+    .hero .date { animation-delay: 0.4s; }
+    .hero .subtitle { animation-delay: 0.6s; }
+    .hero .buttons { animation-delay: 0.8s; }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="hero">
 
   <h1>Alexander & Jordanne</h1>
 
   <div class="date">08.08.26</div>
 
-  <p>
-    Share your favourite moments from our wedding day.
-    Upload your photos and videos so we can relive every memory together 🤍
-  </p>
+  <div class="subtitle">
+    Welcome to our wedding gallery.<br>
+    Share and relive the moments from our special day.
+  </div>
 
   <div class="buttons">
 
-    <button onclick="window.location.href='gallery.html'">
+    <button class="btn" onclick="window.location.href='gallery.html'">
       View Gallery
     </button>
 
-    <button onclick="window.location.href='upload.html'">
-      Upload Memories
+    <button class="btn" onclick="window.location.href='upload.html'">
+      Upload Photos
     </button>
 
   </div>
 
+</div>
+
+<div class="footer">
+  THANK YOU FOR CELEBRATING WITH US
 </div>
 
 </body>
