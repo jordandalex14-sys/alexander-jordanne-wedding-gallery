@@ -2,16 +2,33 @@
 <html>
 <head>
   <title>Wedding Gallery | Alexander & Jordanne</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #000;
       color: white;
+      animation: pageFade 0.6s ease forwards;
+    }
+
+    @keyframes pageFade {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .toolbar {
@@ -19,11 +36,15 @@
       top: 0;
       left: 0;
       width: 100%;
+
       z-index: 9999;
+
       display: flex;
       justify-content: center;
-      gap: 10px;
-      padding: 12px 10px;
+      gap: 8px;
+
+      padding: 12px 8px;
+
       background: rgba(0,0,0,0.45);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,0.15);
@@ -32,12 +53,16 @@
     .toolbar a {
       color: white;
       text-decoration: none;
-      font-size: 13px;
-      letter-spacing: 1px;
-      padding: 8px 14px;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+
+      padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
+
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+
+      transition: 0.3s;
     }
 
     .toolbar a:hover {
@@ -47,10 +72,17 @@
 
     header {
       text-align: center;
-      padding: 75px 18px 18px;
+      padding: 85px 18px 20px;
       font-size: 13px;
       letter-spacing: 2px;
       opacity: 0.8;
+    }
+
+    .hint {
+      text-align: center;
+      font-size: 12px;
+      opacity: 0.55;
+      padding-bottom: 15px;
     }
 
     .grid {
@@ -60,7 +92,9 @@
     }
 
     @media (max-width: 800px) {
-      .grid { column-count: 2; }
+      .grid {
+        column-count: 2;
+      }
     }
 
     .item {
@@ -75,6 +109,12 @@
       width: 100%;
       display: block;
       cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .item img:active {
+      transform: scale(0.98);
+      opacity: 0.9;
     }
 
     .viewer {
@@ -107,7 +147,9 @@
       z-index: 2;
       height: 100%;
       width: 100%;
+
       display: flex;
+
       overflow-x: scroll;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
@@ -121,18 +163,24 @@
     .slide {
       min-width: 100vw;
       height: 100vh;
+
       display: flex;
       justify-content: center;
       align-items: center;
+
       scroll-snap-align: center;
+
       padding: 20px;
     }
 
     .slide img {
       max-width: 95%;
       max-height: 85%;
+
       object-fit: contain;
+
       border-radius: 14px;
+
       box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     }
 
@@ -140,16 +188,78 @@
       position: absolute;
       top: 18px;
       right: 24px;
+
       font-size: 28px;
+
       cursor: pointer;
+
       z-index: 10;
+
       color: white;
+
+      background: rgba(0,0,0,0.35);
+      width: 42px;
+      height: 42px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
     }
 
     .empty {
       text-align: center;
       opacity: 0.7;
       padding-top: 40px;
+    }
+
+    @media(max-width:600px) {
+      .toolbar {
+        gap: 6px;
+        padding: 10px 6px;
+      }
+
+      .toolbar a {
+        font-size: 14px;
+        padding: 10px 12px;
+      }
+
+      header {
+        padding-top: 78px;
+        font-size: 13px;
+      }
+
+      .hint {
+        font-size: 13px;
+      }
+
+      .grid {
+        column-count: 2;
+        column-gap: 8px;
+        padding: 8px;
+      }
+
+      .item {
+        margin-bottom: 8px;
+        border-radius: 10px;
+      }
+
+      .slide {
+        padding: 10px;
+      }
+
+      .slide img {
+        max-width: 96%;
+        max-height: 82%;
+        border-radius: 12px;
+      }
+
+      .close {
+        top: 14px;
+        right: 14px;
+      }
     }
   </style>
 </head>
@@ -165,6 +275,10 @@
 <header>
   Wedding Gallery • Alexander & Jordanne
 </header>
+
+<div class="hint">
+  Tap a photo to view full screen
+</div>
 
 <div class="grid" id="grid"></div>
 
@@ -251,6 +365,7 @@
         left: startIndex * window.innerWidth,
         behavior: "instant"
       });
+
       updateBackground();
     }, 50);
 
@@ -274,9 +389,6 @@
 
   loadGallery();
 </script>
-
-</body>
-</html>
 
 </body>
 </html>
