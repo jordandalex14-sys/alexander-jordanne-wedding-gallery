@@ -3,14 +3,30 @@
 <head>
   <title>Alexander & Jordanne | Wedding Gallery</title>
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       color: white;
       overflow: hidden;
+      animation: pageFade 0.6s ease forwards;
+    }
+
+    @keyframes pageFade {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .toolbar {
@@ -18,11 +34,15 @@
       top: 0;
       left: 0;
       width: 100%;
+
       z-index: 9999;
+
       display: flex;
       justify-content: center;
-      gap: 10px;
-      padding: 12px 10px;
+      gap: 8px;
+
+      padding: 12px 8px;
+
       background: rgba(0,0,0,0.45);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,0.15);
@@ -31,12 +51,16 @@
     .toolbar a {
       color: white;
       text-decoration: none;
-      font-size: 13px;
-      letter-spacing: 1px;
-      padding: 8px 14px;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+
+      padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
+
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+
+      transition: 0.3s;
     }
 
     .toolbar a:hover {
@@ -47,20 +71,25 @@
     .hero {
       height: 100vh;
       width: 100%;
+
       background-image: url("background.jpg");
       background-size: cover;
       background-position: center;
+
       display: flex;
       justify-content: center;
       align-items: center;
       text-align: center;
+
       position: relative;
+
       animation: zoom 25s ease-in-out infinite alternate;
     }
 
     .overlay {
       position: absolute;
       inset: 0;
+
       background: rgba(0,0,0,0.35);
       backdrop-filter: blur(4px);
     }
@@ -68,12 +97,19 @@
     .content {
       position: relative;
       z-index: 2;
+
+      margin: 20px;
       padding: 50px 40px;
+
       border-radius: 20px;
+
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.2);
+
       backdrop-filter: blur(12px);
+
       max-width: 650px;
+
       animation: fadeIn 1.2s ease forwards;
     }
 
@@ -81,6 +117,7 @@
       font-size: 64px;
       font-weight: 300;
       margin: 0;
+
       text-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
 
@@ -99,6 +136,7 @@
 
     .buttons {
       margin-top: 35px;
+
       display: flex;
       gap: 15px;
       flex-wrap: wrap;
@@ -107,14 +145,22 @@
 
     .btn {
       padding: 14px 28px;
+
       border: 1px solid rgba(255,255,255,0.6);
       background: rgba(255,255,255,0.05);
+
       color: white;
+
       cursor: pointer;
+
       transition: 0.3s ease;
+
       min-width: 160px;
+
       font-size: 14px;
+
       border-radius: 10px;
+
       backdrop-filter: blur(6px);
     }
 
@@ -127,25 +173,68 @@
     .footer {
       position: absolute;
       bottom: 20px;
+
       font-size: 11px;
       opacity: 0.6;
       letter-spacing: 3px;
+
       z-index: 2;
     }
 
     @keyframes zoom {
-      from { transform: scale(1); }
-      to { transform: scale(1.06); }
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.06);
+      }
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    @media (max-width: 600px) {
-      h1 { font-size: 42px; }
-      .content { margin: 20px; padding: 35px 22px; }
+    @media(max-width:600px) {
+      .toolbar {
+        gap: 6px;
+        padding: 10px 6px;
+      }
+
+      .toolbar a {
+        font-size: 14px;
+        padding: 10px 12px;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+
+      .content {
+        margin: 20px;
+        padding: 35px 22px;
+      }
+
+      .subtitle {
+        font-size: 16px;
+      }
+
+      .btn {
+        width: 100%;
+        font-size: 16px;
+        padding: 16px;
+      }
+
+      .footer {
+        font-size: 9px;
+        bottom: 12px;
+      }
     }
   </style>
 </head>
@@ -159,11 +248,16 @@
 </nav>
 
 <div class="hero">
+
   <div class="overlay"></div>
 
   <div class="content">
+
     <h1>Alexander & Jordanne</h1>
-    <div class="date">08.08.26</div>
+
+    <div class="date">
+      08.08.26
+    </div>
 
     <div class="subtitle">
       Welcome to our wedding gallery.<br>
@@ -171,12 +265,23 @@
     </div>
 
     <div class="buttons">
-      <button class="btn" onclick="window.location.href='gallery.html'">View Gallery</button>
-      <button class="btn" onclick="window.location.href='upload.html'">Upload Photos</button>
+
+      <button class="btn" onclick="window.location.href='gallery.html'">
+        View Gallery
+      </button>
+
+      <button class="btn" onclick="window.location.href='upload.html'">
+        Upload Photos
+      </button>
+
     </div>
+
   </div>
 
-  <div class="footer">THANK YOU FOR CELEBRATING WITH US</div>
+  <div class="footer">
+    THANK YOU FOR CELEBRATING WITH US
+  </div>
+
 </div>
 
 </body>
