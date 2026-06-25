@@ -8,90 +8,103 @@
   <style>
     body {
       margin: 0;
-      background: radial-gradient(circle at center, #111 0%, #000 70%);
-      overflow: hidden;
       font-family: Arial, sans-serif;
+      background: #0b0b0b;
+      color: white;
     }
 
     header {
-      position: fixed;
-      top: 14px;
-      width: 100%;
       text-align: center;
-      color: rgba(255,255,255,0.75);
+      padding: 20px;
       font-size: 13px;
-      z-index: 10;
       letter-spacing: 2px;
+      opacity: 0.8;
     }
 
-    /* 📱 swipe container */
-    .viewer {
-      height: 100vh;
+    /* 🏠 HOME GRID */
+    .grid {
+      column-count: 3;
+      column-gap: 12px;
+      padding: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { column-count: 2; }
+    }
+
+    @media (max-width: 500px) {
+      .grid { column-count: 2; }
+    }
+
+    .item {
+      margin-bottom: 12px;
+      break-inside: avoid;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .item img {
       width: 100%;
-      display: flex;
+      display: block;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .item img:active {
+      transform: scale(0.98);
+    }
+
+    /* 📱 SWIPE VIEW (hidden until opened) */
+    .viewer {
+      position: fixed;
+      inset: 0;
+      background: black;
+      display: none;
       overflow-x: scroll;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
-      scroll-behavior: smooth;
+      z-index: 100;
     }
 
     .viewer::-webkit-scrollbar {
       display: none;
     }
 
-    /* 🎬 premium slide */
     .slide {
       min-width: 100vw;
       height: 100vh;
-      scroll-snap-align: center;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
-      padding: 40px;
+      scroll-snap-align: center;
+      padding: 20px;
       box-sizing: border-box;
     }
 
-    /* 🖼️ cinematic image style */
     .slide img {
-      max-width: 92%;
-      max-height: 82%;
+      max-width: 95%;
+      max-height: 85%;
       object-fit: contain;
-
-      border-radius: 18px;
-
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.7),
-        0 2px 10px rgba(255,255,255,0.05);
-
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      border-radius: 14px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
     }
 
-    .slide img:active {
-      transform: scale(0.98);
-    }
-
-    /* 🌫️ vignette overlay */
-    .fade {
+    /* close button */
+    .close {
       position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(
-        circle,
-        rgba(0,0,0,0) 55%,
-        rgba(0,0,0,0.85) 100%
-      );
+      top: 15px;
+      right: 20px;
+      font-size: 26px;
+      z-index: 200;
+      cursor: pointer;
+      color: white;
     }
 
-    /* loading */
-    .loading {
-      color: rgba(255,255,255,0.6);
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 14px;
-      letter-spacing: 2px;
+    .hint {
+      text-align: center;
+      font-size: 12px;
+      opacity: 0.6;
+      padding-bottom: 10px;
     }
   </style>
 </head>
@@ -99,14 +112,20 @@
 <body>
 
 <header>
-  Swipe through memories • Alexander & Jordanne
+  Alexander & Jordanne • Wedding Gallery
 </header>
 
-<div class="viewer" id="viewer">
-  <div class="loading">Loading photos...</div>
+<div class="hint">
+  Tap a photo to view full screen
 </div>
 
-<div class="fade"></div>
+<!-- 🏠 GRID VIEW -->
+<div class="grid" id="grid"></div>
+
+<!-- 📱 SWIPE VIEW -->
+<div class="viewer" id="viewer">
+  <div class="close" onclick="closeViewer()">✕</div>
+</div>
 
 <script>
   const supabaseUrl = "https://abggbnqgbbwtswdecgtz.supabase.co";
@@ -114,8 +133,10 @@
 
   const client = supabase.createClient(supabaseUrl, supabaseKey);
 
+  let images = [];
+
   async function loadGallery() {
-    const viewer = document.getElementById("viewer");
+    const grid = document.getElementById("grid");
 
     const { data } = await client
       .storage
@@ -125,29 +146,60 @@
         sortBy: { column: "created_at", order: "desc" }
       });
 
-    viewer.innerHTML = "";
+    grid.innerHTML = "";
+    images = [];
 
-    if (!data || data.length === 0) {
-      viewer.innerHTML = '<div class="loading">No photos yet</div>';
-      return;
-    }
-
-    data.forEach(file => {
+    data.forEach((file, index) => {
 
       const { data: urlData } = client
         .storage
         .from("wedding-media")
         .getPublicUrl("wedding/" + file.name);
 
+      const url = urlData.publicUrl;
+      images.push(url);
+
+      const div = document.createElement("div");
+      div.className = "item";
+
+      const img = document.createElement("img");
+      img.src = url;
+
+      img.onclick = () => openViewer(index);
+
+      div.appendChild(img);
+      grid.appendChild(div);
+    });
+  }
+
+  function openViewer(startIndex) {
+    const viewer = document.getElementById("viewer");
+    viewer.innerHTML = '<div class="close" onclick="closeViewer()">✕</div>';
+
+    images.forEach(url => {
       const slide = document.createElement("div");
       slide.className = "slide";
 
       const img = document.createElement("img");
-      img.src = urlData.publicUrl;
+      img.src = url;
 
       slide.appendChild(img);
       viewer.appendChild(slide);
     });
+
+    viewer.style.display = "flex";
+
+    // jump to selected image
+    setTimeout(() => {
+      viewer.scrollTo({
+        left: startIndex * window.innerWidth,
+        behavior: "instant"
+      });
+    }, 50);
+  }
+
+  function closeViewer() {
+    document.getElementById("viewer").style.display = "none";
   }
 
   loadGallery();
