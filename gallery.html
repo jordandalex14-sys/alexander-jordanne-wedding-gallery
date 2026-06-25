@@ -46,9 +46,17 @@
       background: #f5f5f5;
     }
 
-    img, video {
+    img {
       width: 100%;
       display: block;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    img.selected {
+      outline: 4px solid black;
+      transform: scale(0.98);
+      opacity: 0.85;
     }
 
     .loading {
@@ -63,7 +71,7 @@
 
 <header>
   <h1>Gallery</h1>
-  <p>Alexander & Jordanne • 08.08.26</p>
+  <p>Alexander & Jordanne • 08.08.26 • Tap to select photos 📸</p>
 </header>
 
 <div id="gallery" class="grid">
@@ -75,6 +83,10 @@
   const supabaseKey = "sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
 
   const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+  function toggleSelect(img) {
+    img.classList.toggle("selected");
+  }
 
   async function loadGallery() {
     const container = document.getElementById("gallery");
@@ -95,6 +107,7 @@
     container.innerHTML = "";
 
     for (let file of data) {
+
       const { data: urlData } = client
         .storage
         .from("wedding-media")
@@ -105,12 +118,11 @@
       const div = document.createElement("div");
       div.className = "item";
 
-      if (file.name.match(/\.(mp4|mov|webm)$/)) {
-        div.innerHTML = `<video src="${url}" controls></video>`;
-      } else {
-        div.innerHTML = `<img src="${url}" />`;
-      }
+      const img = document.createElement("img");
+      img.src = url;
+      img.onclick = () => toggleSelect(img);
 
+      div.appendChild(img);
       container.appendChild(div);
     }
   }
