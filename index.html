@@ -7,39 +7,55 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #ffffff 0%, #f7f7f7 100%);
-      color: #111;
+      color: white;
     }
 
+    /* 🌄 FULL SCREEN BACKGROUND */
     .hero {
-      min-height: 100vh;
+      height: 100vh;
+      width: 100%;
+      background-image: url("background.jpg");
+      background-size: cover;
+      background-position: center;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 40px;
+      position: relative;
+    }
+
+    /* dark overlay for readability */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
     }
 
     h1 {
       font-size: 64px;
       font-weight: 300;
-      letter-spacing: -2px;
       margin: 0;
+      letter-spacing: -1px;
     }
 
     .date {
-      margin-top: 15px;
+      margin-top: 10px;
       letter-spacing: 6px;
-      color: #555;
+      opacity: 0.85;
     }
 
     .subtitle {
       margin-top: 25px;
       max-width: 500px;
-      color: #666;
       line-height: 1.6;
-      font-size: 16px;
+      opacity: 0.9;
     }
 
     .buttons {
@@ -52,47 +68,26 @@
 
     .btn {
       padding: 14px 28px;
-      border: 1px solid #111;
-      background: white;
+      border: 1px solid white;
+      background: transparent;
+      color: white;
       cursor: pointer;
-      font-size: 15px;
-      transition: 0.25s ease;
+      transition: 0.25s;
       min-width: 160px;
     }
 
     .btn:hover {
-      background: #111;
-      color: white;
+      background: white;
+      color: black;
     }
 
     .footer {
       position: absolute;
       bottom: 20px;
       font-size: 12px;
-      color: #999;
+      opacity: 0.7;
       letter-spacing: 2px;
-    }
-
-    /* subtle fade-in */
-    .hero > * {
-      animation: fadeIn 1s ease forwards;
-      opacity: 0;
-    }
-
-    .hero h1 { animation-delay: 0.2s; }
-    .hero .date { animation-delay: 0.4s; }
-    .hero .subtitle { animation-delay: 0.6s; }
-    .hero .buttons { animation-delay: 0.8s; }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
+      z-index: 2;
     }
   </style>
 </head>
@@ -101,31 +96,38 @@
 
 <div class="hero">
 
-  <h1>Alexander & Jordanne</h1>
+  <!-- dark overlay -->
+  <div class="overlay"></div>
 
-  <div class="date">08.08.26</div>
+  <div class="content">
 
-  <div class="subtitle">
-    Welcome to our wedding gallery.<br>
-    Share and relive the moments from our special day.
+    <h1>Alexander & Jordanne</h1>
+
+    <div class="date">08.08.26</div>
+
+    <div class="subtitle">
+      Welcome to our wedding gallery.<br>
+      Share and relive the moments from our special day.
+    </div>
+
+    <div class="buttons">
+
+      <button class="btn" onclick="window.location.href='gallery.html'">
+        View Gallery
+      </button>
+
+      <button class="btn" onclick="window.location.href='upload.html'">
+        Upload Photos
+      </button>
+
+    </div>
+
   </div>
 
-  <div class="buttons">
-
-    <button class="btn" onclick="window.location.href='gallery.html'">
-      View Gallery
-    </button>
-
-    <button class="btn" onclick="window.location.href='upload.html'">
-      Upload Photos
-    </button>
-
+  <div class="footer">
+    THANK YOU FOR CELEBRATING WITH US
   </div>
 
-</div>
-
-<div class="footer">
-  THANK YOU FOR CELEBRATING WITH US
 </div>
 
 </body>
