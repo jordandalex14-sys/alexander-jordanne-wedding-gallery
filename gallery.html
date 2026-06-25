@@ -8,122 +8,90 @@
   <style>
     body {
       margin: 0;
+      background: radial-gradient(circle at center, #111 0%, #000 70%);
+      overflow: hidden;
       font-family: Arial, sans-serif;
-      background: #fff;
-      color: #111;
     }
 
     header {
-      text-align: center;
-      padding: 40px 20px 10px;
-    }
-
-    h1 {
-      font-weight: 300;
-      font-size: 48px;
-      margin: 0;
-    }
-
-    .grid {
-      column-count: 3;
-      column-gap: 12px;
-      padding: 20px;
-    }
-
-    @media (max-width: 900px) {
-      .grid { column-count: 2; }
-    }
-
-    @media (max-width: 500px) {
-      .grid { column-count: 1; }
-    }
-
-    .item {
-      margin-bottom: 12px;
-      border-radius: 10px;
-      overflow: hidden;
-      break-inside: avoid;
-    }
-
-    img {
-      width: 100%;
-      display: block;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    img:hover {
-      opacity: 0.9;
-    }
-
-    /* LIGHTBOX */
-    .lightbox {
       position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.95);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 999;
-      touch-action: pan-y;
+      top: 14px;
+      width: 100%;
+      text-align: center;
+      color: rgba(255,255,255,0.75);
+      font-size: 13px;
+      z-index: 10;
+      letter-spacing: 2px;
     }
 
-    .lightbox img {
-      max-width: 90%;
-      max-height: 80%;
-      object-fit: contain;
-      transition: transform 0.3s ease;
-    }
-
-    .controls {
-      position: absolute;
+    /* 📱 swipe container */
+    .viewer {
+      height: 100vh;
       width: 100%;
       display: flex;
-      justify-content: space-between;
-      top: 50%;
-      transform: translateY(-50%);
-      padding: 0 20px;
-      color: white;
-      font-size: 40px;
-      user-select: none;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
     }
 
-    .nav {
-      cursor: pointer;
-      padding: 10px;
+    .viewer::-webkit-scrollbar {
+      display: none;
     }
 
-    .close {
+    /* 🎬 premium slide */
+    .slide {
+      min-width: 100vw;
+      height: 100vh;
+      scroll-snap-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+
+    /* 🖼️ cinematic image style */
+    .slide img {
+      max-width: 92%;
+      max-height: 82%;
+      object-fit: contain;
+
+      border-radius: 18px;
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.7),
+        0 2px 10px rgba(255,255,255,0.05);
+
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .slide img:active {
+      transform: scale(0.98);
+    }
+
+    /* 🌫️ vignette overlay */
+    .fade {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle,
+        rgba(0,0,0,0) 55%,
+        rgba(0,0,0,0.85) 100%
+      );
+    }
+
+    /* loading */
+    .loading {
+      color: rgba(255,255,255,0.6);
       position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 30px;
-      color: white;
-      cursor: pointer;
-    }
-
-    /* SLIDESHOW */
-    .slideshow {
-      animation: fade 0.6s ease-in-out;
-    }
-
-    @keyframes fade {
-      from { opacity: 0.3; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .topbar {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .btn {
-      border: 1px solid black;
-      background: white;
-      padding: 6px 14px;
-      margin: 5px;
-      cursor: pointer;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      letter-spacing: 2px;
     }
   </style>
 </head>
@@ -131,28 +99,14 @@
 <body>
 
 <header>
-  <h1>Gallery</h1>
-  <p>Alexander & Jordanne • 08.08.26</p>
-
-  <div class="topbar">
-    <button class="btn" onclick="startSlideshow()">🎬 Slideshow</button>
-    <button class="btn" onclick="stopSlideshow()">⏹ Stop</button>
-  </div>
+  Swipe through memories • Alexander & Jordanne
 </header>
 
-<div id="gallery" class="grid"></div>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox">
-  <div class="close" onclick="closeLightbox()">✕</div>
-
-  <div class="controls">
-    <div class="nav" onclick="prevImage()">‹</div>
-    <div class="nav" onclick="nextImage()">›</div>
-  </div>
-
-  <img id="lightboxImg" />
+<div class="viewer" id="viewer">
+  <div class="loading">Loading photos...</div>
 </div>
+
+<div class="fade"></div>
 
 <script>
   const supabaseUrl = "https://abggbnqgbbwtswdecgtz.supabase.co";
@@ -160,73 +114,8 @@
 
   const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-  let images = [];
-  let currentIndex = 0;
-  let slideshowInterval = null;
-
-  function openLightbox(index) {
-    currentIndex = index;
-    const lb = document.getElementById("lightbox");
-    const img = document.getElementById("lightboxImg");
-
-    lb.style.display = "flex";
-    img.src = images[index];
-    img.classList.add("slideshow");
-  }
-
-  function closeLightbox() {
-    document.getElementById("lightbox").style.display = "none";
-    stopSlideshow();
-  }
-
-  function nextImage() {
-    currentIndex = (currentIndex + 1) % images.length;
-    updateLightbox();
-  }
-
-  function prevImage() {
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
-    updateLightbox();
-  }
-
-  function updateLightbox() {
-    const img = document.getElementById("lightboxImg");
-    img.classList.remove("slideshow");
-    void img.offsetWidth;
-    img.classList.add("slideshow");
-    img.src = images[currentIndex];
-  }
-
-  /* 🎬 SLIDESHOW */
-  function startSlideshow() {
-    if (slideshowInterval) return;
-    openLightbox(0);
-    slideshowInterval = setInterval(nextImage, 3000);
-  }
-
-  function stopSlideshow() {
-    clearInterval(slideshowInterval);
-    slideshowInterval = null;
-  }
-
-  /* 👆 SWIPE SUPPORT */
-  let touchStartX = 0;
-
-  document.addEventListener("touchstart", e => {
-    touchStartX = e.changedTouches[0].screenX;
-  });
-
-  document.addEventListener("touchend", e => {
-    let diff = e.changedTouches[0].screenX - touchStartX;
-
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) prevImage();
-      else nextImage();
-    }
-  });
-
   async function loadGallery() {
-    const container = document.getElementById("gallery");
+    const viewer = document.getElementById("viewer");
 
     const { data } = await client
       .storage
@@ -236,33 +125,32 @@
         sortBy: { column: "created_at", order: "desc" }
       });
 
-    container.innerHTML = "";
-    images = [];
+    viewer.innerHTML = "";
 
-    data.forEach((file, index) => {
+    if (!data || data.length === 0) {
+      viewer.innerHTML = '<div class="loading">No photos yet</div>';
+      return;
+    }
+
+    data.forEach(file => {
 
       const { data: urlData } = client
         .storage
         .from("wedding-media")
         .getPublicUrl("wedding/" + file.name);
 
-      const url = urlData.publicUrl;
-      images.push(url);
-
-      const div = document.createElement("div");
-      div.className = "item";
+      const slide = document.createElement("div");
+      slide.className = "slide";
 
       const img = document.createElement("img");
-      img.src = url;
-      img.onclick = () => openLightbox(index);
+      img.src = urlData.publicUrl;
 
-      div.appendChild(img);
-      container.appendChild(div);
+      slide.appendChild(img);
+      viewer.appendChild(slide);
     });
   }
 
   loadGallery();
-  setInterval(loadGallery, 10000);
 </script>
 
 </body>
