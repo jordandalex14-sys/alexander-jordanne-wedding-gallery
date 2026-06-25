@@ -10,7 +10,7 @@
       color: white;
     }
 
-    /* 🌄 FULL SCREEN BACKGROUND */
+    /* 🌄 Background */
     .hero {
       height: 100vh;
       width: 100%;
@@ -18,23 +18,31 @@
       background-size: cover;
       background-position: center;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
       position: relative;
+      animation: zoom 20s ease-in-out infinite alternate;
     }
 
-    /* dark overlay for readability */
+    /* 🌫️ Overlay */
     .overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.45);
+      background: rgba(0,0,0,0.4);
     }
 
+    /* Content wrapper */
     .content {
       position: relative;
       z-index: 2;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
       padding: 20px;
     }
 
@@ -42,7 +50,7 @@
       font-size: 64px;
       font-weight: 300;
       margin: 0;
-      letter-spacing: -1px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.4);
     }
 
     .date {
@@ -53,7 +61,7 @@
 
     .subtitle {
       margin-top: 25px;
-      max-width: 500px;
+      max-width: 520px;
       line-height: 1.6;
       opacity: 0.9;
     }
@@ -74,6 +82,7 @@
       cursor: pointer;
       transition: 0.25s;
       min-width: 160px;
+      font-size: 15px;
     }
 
     .btn:hover {
@@ -89,6 +98,12 @@
       letter-spacing: 2px;
       z-index: 2;
     }
+
+    /* 🎞️ slow cinematic zoom */
+    @keyframes zoom {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
   </style>
 </head>
 
@@ -96,7 +111,6 @@
 
 <div class="hero">
 
-  <!-- dark overlay -->
   <div class="overlay"></div>
 
   <div class="content">
