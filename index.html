@@ -4,14 +4,46 @@
   <title>Alexander & Jordanne | Wedding Gallery</title>
 
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: "Arial", sans-serif;
+      font-family: Arial, sans-serif;
       color: white;
       overflow: hidden;
     }
 
-    /* 🌄 Cinematic background */
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 10px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .toolbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 1px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .toolbar a:hover {
+      background: white;
+      color: black;
+    }
+
     .hero {
       height: 100vh;
       width: 100%;
@@ -26,7 +58,6 @@
       animation: zoom 25s ease-in-out infinite alternate;
     }
 
-    /* 🌫️ luxury dark + blur overlay */
     .overlay {
       position: absolute;
       inset: 0;
@@ -34,28 +65,15 @@
       backdrop-filter: blur(4px);
     }
 
-    /* 💎 glass panel */
     .content {
       position: relative;
       z-index: 2;
-
       padding: 50px 40px;
       border-radius: 20px;
-
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.2);
-
       backdrop-filter: blur(12px);
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      text-align: center;
-
       max-width: 650px;
-
       animation: fadeIn 1.2s ease forwards;
     }
 
@@ -63,7 +81,6 @@
       font-size: 64px;
       font-weight: 300;
       margin: 0;
-      letter-spacing: -1px;
       text-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
 
@@ -75,13 +92,11 @@
 
     .subtitle {
       margin-top: 25px;
-      max-width: 500px;
       line-height: 1.6;
       opacity: 0.9;
       font-size: 15px;
     }
 
-    /* 🎯 luxury buttons */
     .buttons {
       margin-top: 35px;
       display: flex;
@@ -118,48 +133,36 @@
       z-index: 2;
     }
 
-    /* 🎞️ background motion */
     @keyframes zoom {
       from { transform: scale(1); }
       to { transform: scale(1.06); }
     }
 
-    /* ✨ fade-in */
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 📱 mobile tuning */
     @media (max-width: 600px) {
-      h1 {
-        font-size: 42px;
-      }
-
-      .content {
-        margin: 20px;
-        padding: 30px 20px;
-      }
+      h1 { font-size: 42px; }
+      .content { margin: 20px; padding: 35px 22px; }
     }
   </style>
 </head>
 
 <body>
 
-<div class="hero">
+<nav class="toolbar">
+  <a href="index.html">Home</a>
+  <a href="upload.html">Upload</a>
+  <a href="gallery.html">Gallery</a>
+</nav>
 
+<div class="hero">
   <div class="overlay"></div>
 
   <div class="content">
-
     <h1>Alexander & Jordanne</h1>
-
     <div class="date">08.08.26</div>
 
     <div class="subtitle">
@@ -168,23 +171,12 @@
     </div>
 
     <div class="buttons">
-
-      <button class="btn" onclick="window.location.href='gallery.html'">
-        View Gallery
-      </button>
-
-      <button class="btn" onclick="window.location.href='upload.html'">
-        Upload Photos
-      </button>
-
+      <button class="btn" onclick="window.location.href='gallery.html'">View Gallery</button>
+      <button class="btn" onclick="window.location.href='upload.html'">Upload Photos</button>
     </div>
-
   </div>
 
-  <div class="footer">
-    THANK YOU FOR CELEBRATING WITH US
-  </div>
-
+  <div class="footer">THANK YOU FOR CELEBRATING WITH US</div>
 </div>
 
 </body>
