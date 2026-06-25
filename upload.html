@@ -53,10 +53,7 @@ padding:40px 30px;
 background:
 rgba(255,255,255,0.08);
 
-border:
-
-1px solid rgba(255,255,255,0.2);
-
+border:1px solid rgba(255,255,255,0.2);
 
 border-radius:25px;
 
@@ -109,40 +106,49 @@ opacity:.85;
 
 
 
-
-/* upload area */
-
+/* NEW CLEAN UPLOAD CARD */
 
 .upload-box {
 
 margin-top:35px;
 
-padding:40px 20px;
-
-border:2px dashed rgba(255,255,255,.5);
+padding:30px 20px;
 
 border-radius:20px;
 
 cursor:pointer;
+
+background:
+
+rgba(255,255,255,0.12);
+
+border:
+
+1px solid rgba(255,255,255,0.25);
 
 transition:.3s;
 
 }
 
 
+
 .upload-box:hover {
 
 background:
-rgba(255,255,255,.1);
+
+rgba(255,255,255,0.18);
+
+transform:translateY(-2px);
 
 }
 
 
 .upload-box:active {
 
-transform:scale(.98);
+transform:scale(.97);
 
 }
+
 
 
 .upload-box input {
@@ -157,7 +163,17 @@ display:none;
 
 font-size:50px;
 
-margin-bottom:10px;
+margin-bottom:12px;
+
+}
+
+
+
+.choose {
+
+font-size:18px;
+
+margin-bottom:8px;
 
 }
 
@@ -235,6 +251,7 @@ transition:.3s;
 }
 
 
+
 button:hover {
 
 transform:translateY(-2px);
@@ -273,13 +290,14 @@ font-size:34px;
 
 }
 
+
 }
+
 
 
 </style>
 
 </head>
-
 
 
 
@@ -319,21 +337,25 @@ from our special day
 </div>
 
 
-<div>
-Tap to choose photos
+<div class="choose">
+Choose Photos
 </div>
 
 
 <div class="small">
-You can select multiple images
+Select the memories you'd like to share
 </div>
 
 
 
 <input
+
 id="files"
+
 type="file"
+
 accept="image/*"
+
 multiple>
 
 
@@ -366,6 +388,7 @@ Upload Photos
 
 
 
+
 <script>
 
 
@@ -391,10 +414,15 @@ let selectedFiles=[];
 
 
 document
+
 .getElementById("files")
+
 .addEventListener(
+
 "change",
+
 function(e){
+
 
 
 selectedFiles =
@@ -417,6 +445,7 @@ selectedFiles.forEach(file=>{
 const img =
 document.createElement("img");
 
+
 img.src =
 URL.createObjectURL(file);
 
@@ -438,6 +467,7 @@ preview.appendChild(img);
 async function uploadPhotos(){
 
 
+
 const status =
 document.getElementById("status");
 
@@ -445,10 +475,12 @@ document.getElementById("status");
 
 if(selectedFiles.length===0){
 
+
 status.innerHTML =
-"Please select some photos first.";
+"Please choose photos first.";
 
 return;
+
 
 }
 
@@ -459,7 +491,7 @@ status.innerHTML =
 
 
 
-let uploaded = 0;
+let uploaded=0;
 
 
 
@@ -470,14 +502,21 @@ for(const file of selectedFiles){
 const filename =
 
 Date.now()
+
 +
+
 "-"
+
 +
+
 file.name;
 
 
 
-const {error} = await client
+
+const {error}=
+
+await client
 
 .storage
 
@@ -494,14 +533,19 @@ file
 
 
 
+
 if(error){
 
+
 console.log(error);
+
 
 status.innerHTML =
 "Upload failed";
 
+
 return;
+
 
 }
 
@@ -518,9 +562,13 @@ uploaded++;
 status.innerHTML =
 
 "✨ "
+
 +
+
 uploaded
+
 +
+
 " photos uploaded successfully!";
 
 
