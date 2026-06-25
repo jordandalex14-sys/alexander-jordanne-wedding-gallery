@@ -39,7 +39,6 @@
     }
 
     .item {
-      position: relative;
       margin-bottom: 12px;
       border-radius: 10px;
       overflow: hidden;
@@ -55,23 +54,6 @@
 
     img:hover {
       opacity: 0.9;
-    }
-
-    /* ❤️ HEART */
-    .heart {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      font-size: 22px;
-      background: rgba(255,255,255,0.85);
-      border-radius: 50%;
-      padding: 6px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .heart.liked {
-      color: red;
     }
 
     /* LIGHTBOX */
@@ -121,7 +103,7 @@
       cursor: pointer;
     }
 
-    /* SLIDESHOW MODE */
+    /* SLIDESHOW */
     .slideshow {
       animation: fade 0.6s ease-in-out;
     }
@@ -210,18 +192,9 @@
   function updateLightbox() {
     const img = document.getElementById("lightboxImg");
     img.classList.remove("slideshow");
-    void img.offsetWidth; // restart animation
+    void img.offsetWidth;
     img.classList.add("slideshow");
     img.src = images[currentIndex];
-  }
-
-  /* ❤️ HEART REACTIONS */
-  function toggleHeart(el, id) {
-    el.classList.toggle("liked");
-
-    let likes = JSON.parse(localStorage.getItem("weddingLikes") || "{}");
-    likes[id] = !likes[id];
-    localStorage.setItem("weddingLikes", JSON.stringify(likes));
   }
 
   /* 🎬 SLIDESHOW */
@@ -266,8 +239,6 @@
     container.innerHTML = "";
     images = [];
 
-    const likes = JSON.parse(localStorage.getItem("weddingLikes") || "{}");
-
     data.forEach((file, index) => {
 
       const { data: urlData } = client
@@ -285,20 +256,7 @@
       img.src = url;
       img.onclick = () => openLightbox(index);
 
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.innerHTML = "❤️";
-
-      if (likes[file.name]) heart.classList.add("liked");
-
-      heart.onclick = (e) => {
-        e.stopPropagation();
-        toggleHeart(heart, file.name);
-      };
-
       div.appendChild(img);
-      div.appendChild(heart);
-
       container.appendChild(div);
     });
   }
