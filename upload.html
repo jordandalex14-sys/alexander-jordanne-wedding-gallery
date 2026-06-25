@@ -1,540 +1,275 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
-<title>Upload Photos | Alexander & Jordanne</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-<style>
-
-* {
-box-sizing:border-box;
-}
-
-
-body {
-
-margin:0;
-
-min-height:100vh;
-
-font-family:Arial, sans-serif;
-
-background:
-radial-gradient(circle at top,#444,#000);
-
-color:white;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-padding:20px;
-
-}
-
-
-
-.container {
-
-width:100%;
-
-max-width:520px;
-
-padding:40px 30px;
-
-background:rgba(255,255,255,0.08);
-
-border:1px solid rgba(255,255,255,0.2);
-
-border-radius:25px;
-
-backdrop-filter:blur(15px);
-
-text-align:center;
-
-box-shadow:0 20px 60px rgba(0,0,0,.5);
-
-}
-
-
-
-h1 {
-
-font-weight:300;
-
-font-size:42px;
-
-margin:0;
-
-}
-
-
-
-.date {
-
-margin-top:10px;
-
-font-size:13px;
-
-letter-spacing:6px;
-
-opacity:.75;
-
-}
-
-
-
-.message {
-
-margin-top:25px;
-
-line-height:1.5;
-
-opacity:.85;
-
-}
-
-
-
-/* upload card */
-
-.upload-box {
-
-margin-top:35px;
-
-padding:35px 20px;
-
-border-radius:20px;
-
-cursor:pointer;
-
-background:rgba(255,255,255,0.12);
-
-border:1px solid rgba(255,255,255,0.25);
-
-transition:.3s;
-
-}
-
-
-
-.upload-box:hover {
-
-background:rgba(255,255,255,0.18);
-
-transform:translateY(-2px);
-
-}
-
-
-
-.upload-box:active {
-
-transform:scale(.97);
-
-}
-
-
-
-.camera {
-
-font-size:50px;
-
-margin-bottom:12px;
-
-}
-
-
-
-.choose {
-
-font-size:20px;
-
-margin-bottom:8px;
-
-}
-
-
-
-.small {
-
-font-size:13px;
-
-opacity:.7;
-
-}
-
-
-
-/* previews */
-
-.preview {
-
-display:flex;
-
-gap:12px;
-
-overflow-x:auto;
-
-margin-top:25px;
-
-}
-
-
-
-.preview img {
-
-height:85px;
-
-width:85px;
-
-object-fit:cover;
-
-border-radius:14px;
-
-}
-
-
-
-/* button */
-
-button {
-
-margin-top:30px;
-
-width:100%;
-
-padding:16px;
-
-border-radius:30px;
-
-border:none;
-
-background:white;
-
-color:black;
-
-font-size:15px;
-
-cursor:pointer;
-
-}
-
-
-
-button:hover {
-
-transform:translateY(-2px);
-
-}
-
-
-
-.status {
-
-margin-top:20px;
-
-font-size:14px;
-
-opacity:.85;
-
-}
-
-
-
-
-@media(max-width:600px){
-
-.container {
-
-padding:30px 20px;
-
-}
-
-
-h1 {
-
-font-size:34px;
-
-}
-
-}
-
-
-</style>
-
+  <title>Upload Photos | Alexander & Jordanne</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #444, #000);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      min-height: 100vh;
+      padding: 60px 30px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(15px);
+      border-left: 1px solid rgba(255,255,255,0.15);
+      border-right: 1px solid rgba(255,255,255,0.15);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+
+    h1 {
+      font-weight: 300;
+      font-size: 42px;
+      margin: 0;
+    }
+
+    .date {
+      margin-top: 10px;
+      font-size: 13px;
+      letter-spacing: 6px;
+      opacity: .75;
+    }
+
+    .message {
+      margin-top: 25px;
+      line-height: 1.5;
+      opacity: .85;
+    }
+
+    .upload-box {
+      margin-top: 35px;
+      padding: 35px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      transition: .3s;
+    }
+
+    .upload-box:hover {
+      background: rgba(255,255,255,0.18);
+      transform: translateY(-2px);
+    }
+
+    .upload-box:active {
+      transform: scale(.97);
+    }
+
+    .camera {
+      font-size: 50px;
+      margin-bottom: 12px;
+    }
+
+    .choose {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .small {
+      font-size: 13px;
+      opacity: .7;
+    }
+
+    .preview {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      margin-top: 25px;
+    }
+
+    .preview img {
+      height: 85px;
+      width: 85px;
+      object-fit: cover;
+      border-radius: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      border-radius: 30px;
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .upload-btn {
+      margin-top: 30px;
+      background: white;
+      color: black;
+    }
+
+    .gallery-btn {
+      margin-top: 12px;
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.45);
+    }
+
+    .gallery-btn:hover {
+      background: white;
+      color: black;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 14px;
+      opacity: .85;
+      min-height: 20px;
+    }
+
+    @media(max-width:600px) {
+      .container {
+        max-width: 100%;
+        padding: 40px 24px;
+        border-radius: 0;
+        border: none;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      .camera {
+        font-size: 60px;
+      }
+
+      .choose {
+        font-size: 24px;
+      }
+
+      button {
+        font-size: 17px;
+        padding: 18px;
+      }
+
+      .preview img {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
 </head>
 
-
-
 <body>
+  <div class="container">
+    <h1>Alexander & Jordanne</h1>
 
+    <div class="date">08.08.26</div>
 
+    <div class="message">
+      Share your favourite memories<br>
+      from our special day
+    </div>
 
-<div class="container">
+    <div class="upload-box" onclick="document.getElementById('files').click();">
+      <div class="camera">📸</div>
+      <div class="choose">Choose Photos</div>
+      <div class="small">Select the memories you'd like to share</div>
+    </div>
 
+    <input
+      id="files"
+      type="file"
+      accept="image/*"
+      multiple
+      style="display:none;"
+    >
 
-<h1>
-Alexander & Jordanne
-</h1>
+    <div class="preview" id="preview"></div>
 
+    <button class="upload-btn" onclick="uploadPhotos()">
+      Upload Photos
+    </button>
 
-<div class="date">
-08.08.26
-</div>
+    <button class="gallery-btn" onclick="window.location.href='gallery.html'">
+      View Gallery
+    </button>
 
+    <div class="status" id="status"></div>
+  </div>
 
+  <script>
+    const supabaseUrl = "https://abggbnqgbbwtswdecgtz.supabase.co";
+    const supabaseKey = "sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
 
-<div class="message">
+    const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-Share your favourite memories<br>
-from our special day
+    let selectedFiles = [];
 
-</div>
+    document.getElementById("files").addEventListener("change", function(e) {
+      selectedFiles = Array.from(e.target.files);
 
+      const preview = document.getElementById("preview");
+      preview.innerHTML = "";
 
+      selectedFiles.forEach(file => {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        preview.appendChild(img);
+      });
+    });
 
+    async function uploadPhotos() {
+      const status = document.getElementById("status");
 
-<!-- CLICKABLE UPLOAD CARD -->
+      if (selectedFiles.length === 0) {
+        status.innerHTML = "Please choose photos first.";
+        return;
+      }
 
-<div 
-class="upload-box"
-onclick="document.getElementById('files').click();">
+      status.innerHTML = "Uploading photos...";
 
+      let uploaded = 0;
 
-<div class="camera">
-📸
-</div>
+      for (const file of selectedFiles) {
+        const filename = Date.now() + "-" + file.name;
 
+        const { error } = await client
+          .storage
+          .from("wedding-media")
+          .upload("wedding/" + filename, file);
 
-<div class="choose">
-Choose Photos
-</div>
+        if (error) {
+          console.log(error);
+          status.innerHTML = "Upload failed";
+          return;
+        }
 
+        uploaded++;
+      }
 
-<div class="small">
-Select the memories you'd like to share
-</div>
+      status.innerHTML = "✨ " + uploaded + " photos uploaded successfully!";
 
-
-</div>
-
-
-
-<input
-id="files"
-type="file"
-accept="image/*"
-multiple
-style="display:none;">
-
-
-
-
-
-<div class="preview" id="preview"></div>
-
-
-
-
-<button onclick="uploadPhotos()">
-
-Upload Photos
-
-</button>
-
-
-
-<div class="status" id="status"></div>
-
-
-
-</div>
-
-
-
-
-
-
-<script>
-
-
-const supabaseUrl =
-"https://abggbnqgbbwtswdecgtz.supabase.co";
-
-
-const supabaseKey =
-"sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
-
-
-
-const client =
-supabase.createClient(
-supabaseUrl,
-supabaseKey
-);
-
-
-
-let selectedFiles=[];
-
-
-
-document
-.getElementById("files")
-.addEventListener("change", function(e){
-
-
-selectedFiles =
-Array.from(e.target.files);
-
-
-
-const preview =
-document.getElementById("preview");
-
-
-preview.innerHTML="";
-
-
-
-selectedFiles.forEach(file=>{
-
-
-const img =
-document.createElement("img");
-
-
-img.src =
-URL.createObjectURL(file);
-
-
-preview.appendChild(img);
-
-
-});
-
-
-});
-
-
-
-
-
-
-async function uploadPhotos(){
-
-
-const status =
-document.getElementById("status");
-
-
-
-if(selectedFiles.length===0){
-
-status.innerHTML =
-"Please choose photos first.";
-
-return;
-
-}
-
-
-
-status.innerHTML =
-"Uploading photos...";
-
-
-
-let uploaded=0;
-
-
-
-for(const file of selectedFiles){
-
-
-
-const filename =
-
-Date.now()
-+
-"-"
-+
-file.name;
-
-
-
-const {error} = await client
-
-.storage
-
-.from("wedding-media")
-
-.upload(
-
-"wedding/"+filename,
-
-file
-
-);
-
-
-
-if(error){
-
-
-console.log(error);
-
-
-status.innerHTML =
-"Upload failed";
-
-
-return;
-
-}
-
-
-uploaded++;
-
-
-}
-
-
-
-
-status.innerHTML =
-
-"✨ "
-+
-uploaded
-+
-" photos uploaded successfully!";
-
-
-
-selectedFiles=[];
-
-
-document.getElementById("preview").innerHTML="";
-
-
-document.getElementById("files").value="";
-
-
-}
-
-
-</script>
-
-
-
+      selectedFiles = [];
+      document.getElementById("preview").innerHTML = "";
+      document.getElementById("files").value = "";
+    }
+  </script>
 </body>
-
 </html>
