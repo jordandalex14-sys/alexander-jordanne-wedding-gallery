@@ -1,118 +1,546 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Upload Memories | Alexander & Jordanne</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Upload Photos | Alexander & Jordanne</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fff;
-      color: #111;
-      text-align: center;
-    }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    .container {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-    }
 
-    h1 {
-      font-weight: 300;
-      font-size: 42px;
-    }
+<style>
 
-    p {
-      color: #666;
-      max-width: 420px;
-      line-height: 1.6;
-    }
+* {
+  box-sizing:border-box;
+}
 
-    input {
-      margin-top: 25px;
-    }
 
-    button {
-      margin-top: 20px;
-      padding: 12px 28px;
-      border: 1px solid black;
-      background: white;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+body {
 
-    button:hover {
-      background: black;
-      color: white;
-    }
+margin:0;
 
-    #status {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #666;
-    }
-  </style>
+min-height:100vh;
+
+font-family:Arial, sans-serif;
+
+background:
+radial-gradient(circle at top,#444,#000);
+
+color:white;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+padding:20px;
+
+}
+
+
+
+/* luxury card */
+
+.container {
+
+width:100%;
+
+max-width:520px;
+
+padding:40px 30px;
+
+background:
+rgba(255,255,255,0.08);
+
+border:
+
+1px solid rgba(255,255,255,0.2);
+
+
+border-radius:25px;
+
+backdrop-filter:blur(15px);
+
+text-align:center;
+
+box-shadow:
+
+0 20px 60px rgba(0,0,0,.5);
+
+}
+
+
+
+h1 {
+
+font-weight:300;
+
+font-size:42px;
+
+margin:0;
+
+}
+
+
+.date {
+
+margin-top:10px;
+
+font-size:13px;
+
+letter-spacing:6px;
+
+opacity:.75;
+
+}
+
+
+
+.message {
+
+margin-top:25px;
+
+line-height:1.5;
+
+opacity:.85;
+
+}
+
+
+
+
+/* upload area */
+
+
+.upload-box {
+
+margin-top:35px;
+
+padding:40px 20px;
+
+border:2px dashed rgba(255,255,255,.5);
+
+border-radius:20px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+
+.upload-box:hover {
+
+background:
+rgba(255,255,255,.1);
+
+}
+
+
+.upload-box:active {
+
+transform:scale(.98);
+
+}
+
+
+.upload-box input {
+
+display:none;
+
+}
+
+
+
+.camera {
+
+font-size:50px;
+
+margin-bottom:10px;
+
+}
+
+
+
+.small {
+
+font-size:13px;
+
+opacity:.7;
+
+}
+
+
+
+
+/* previews */
+
+
+.preview {
+
+display:flex;
+
+gap:12px;
+
+overflow-x:auto;
+
+margin-top:25px;
+
+padding-bottom:5px;
+
+}
+
+
+
+.preview img {
+
+height:85px;
+
+width:85px;
+
+object-fit:cover;
+
+border-radius:14px;
+
+}
+
+
+
+/* button */
+
+
+button {
+
+margin-top:30px;
+
+width:100%;
+
+padding:16px;
+
+border-radius:30px;
+
+border:none;
+
+background:white;
+
+color:black;
+
+font-size:15px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+
+button:hover {
+
+transform:translateY(-2px);
+
+}
+
+
+
+.status {
+
+margin-top:20px;
+
+font-size:14px;
+
+opacity:.85;
+
+}
+
+
+
+
+
+@media(max-width:600px){
+
+
+.container {
+
+padding:30px 20px;
+
+}
+
+
+h1 {
+
+font-size:34px;
+
+}
+
+}
+
+
+</style>
+
 </head>
+
+
+
 
 <body>
 
+
+
 <div class="container">
 
-  <h1>Upload Memories</h1>
 
-  <p>
-    Add your photos and videos from Alexander & Jordanne’s wedding 🤍
-  </p>
+<h1>
+Alexander & Jordanne
+</h1>
 
-  <input type="file" id="fileInput" multiple accept="image/*,video/*" />
 
-  <button onclick="uploadFiles()">Upload</button>
+<div class="date">
+08.08.26
+</div>
 
-  <div id="status"></div>
+
+
+<div class="message">
+
+Share your favourite memories<br>
+from our special day
 
 </div>
 
+
+
+
+<label class="upload-box">
+
+
+<div class="camera">
+📸
+</div>
+
+
+<div>
+Tap to choose photos
+</div>
+
+
+<div class="small">
+You can select multiple images
+</div>
+
+
+
+<input
+id="files"
+type="file"
+accept="image/*"
+multiple>
+
+
+</label>
+
+
+
+
+<div class="preview" id="preview"></div>
+
+
+
+
+<button onclick="uploadPhotos()">
+
+Upload Photos
+
+</button>
+
+
+
+<div class="status" id="status"></div>
+
+
+
+</div>
+
+
+
+
+
+
 <script>
-  const supabaseUrl = "https://abggbnqgbbwtswdecgtz.supabase.co";
-  const supabaseKey = "sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
 
-  const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-  async function uploadFiles() {
-    const files = document.getElementById("fileInput").files;
-    const status = document.getElementById("status");
+const supabaseUrl =
+"https://abggbnqgbbwtswdecgtz.supabase.co";
 
-    if (!files.length) {
-      status.innerText = "Please select files first.";
-      return;
-    }
 
-    status.innerText = "Uploading... please wait";
+const supabaseKey =
+"sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
 
-    for (let file of files) {
-      const filePath = `wedding/${Date.now()}-${file.name}`;
 
-      const { error } = await client.storage
-        .from("wedding-media")
-        .upload(filePath, file);
 
-      if (error) {
-        console.log(error);
-        status.innerText = "Upload failed ❌";
-        return;
-      }
-    }
+const client =
+supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
 
-    status.innerText = "Upload complete ❤️ Thank you!";
-    document.getElementById("fileInput").value = "";
-  }
+
+
+let selectedFiles=[];
+
+
+
+document
+.getElementById("files")
+.addEventListener(
+"change",
+function(e){
+
+
+selectedFiles =
+Array.from(e.target.files);
+
+
+
+const preview =
+document.getElementById("preview");
+
+
+
+preview.innerHTML="";
+
+
+
+selectedFiles.forEach(file=>{
+
+
+const img =
+document.createElement("img");
+
+img.src =
+URL.createObjectURL(file);
+
+
+preview.appendChild(img);
+
+
+});
+
+
+});
+
+
+
+
+
+
+
+async function uploadPhotos(){
+
+
+const status =
+document.getElementById("status");
+
+
+
+if(selectedFiles.length===0){
+
+status.innerHTML =
+"Please select some photos first.";
+
+return;
+
+}
+
+
+
+status.innerHTML =
+"Uploading photos...";
+
+
+
+let uploaded = 0;
+
+
+
+for(const file of selectedFiles){
+
+
+
+const filename =
+
+Date.now()
++
+"-"
++
+file.name;
+
+
+
+const {error} = await client
+
+.storage
+
+.from("wedding-media")
+
+.upload(
+
+"wedding/"+filename,
+
+file
+
+);
+
+
+
+
+if(error){
+
+console.log(error);
+
+status.innerHTML =
+"Upload failed";
+
+return;
+
+}
+
+
+
+uploaded++;
+
+
+}
+
+
+
+
+status.innerHTML =
+
+"✨ "
++
+uploaded
++
+" photos uploaded successfully!";
+
+
+
+selectedFiles=[];
+
+
+document.getElementById("preview").innerHTML="";
+
+
+document.getElementById("files").value="";
+
+
+}
+
+
 </script>
 
+
+
 </body>
+
 </html>
