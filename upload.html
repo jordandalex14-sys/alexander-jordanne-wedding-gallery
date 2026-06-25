@@ -5,9 +5,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -21,11 +19,42 @@
       padding: 0;
     }
 
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 10px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .toolbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 1px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .toolbar a:hover {
+      background: white;
+      color: black;
+    }
+
     .container {
       width: 100%;
       max-width: 600px;
       min-height: 100vh;
-      padding: 60px 30px;
+      padding: 90px 30px 60px;
       background: rgba(255,255,255,0.08);
       backdrop-filter: blur(15px);
       border-left: 1px solid rgba(255,255,255,0.15);
@@ -146,22 +175,13 @@
     @media(max-width:600px) {
       .container {
         max-width: 100%;
-        padding: 40px 24px;
-        border-radius: 0;
+        padding: 90px 24px 40px;
         border: none;
       }
 
-      h1 {
-        font-size: 36px;
-      }
-
-      .camera {
-        font-size: 60px;
-      }
-
-      .choose {
-        font-size: 24px;
-      }
+      h1 { font-size: 36px; }
+      .camera { font-size: 60px; }
+      .choose { font-size: 24px; }
 
       button {
         font-size: 17px;
@@ -177,99 +197,93 @@
 </head>
 
 <body>
-  <div class="container">
-    <h1>Alexander & Jordanne</h1>
 
-    <div class="date">08.08.26</div>
+<nav class="toolbar">
+  <a href="index.html">Home</a>
+  <a href="upload.html">Upload</a>
+  <a href="gallery.html">Gallery</a>
+</nav>
 
-    <div class="message">
-      Share your favourite memories<br>
-      from our special day
-    </div>
+<div class="container">
+  <h1>Alexander & Jordanne</h1>
+  <div class="date">08.08.26</div>
 
-    <div class="upload-box" onclick="document.getElementById('files').click();">
-      <div class="camera">📸</div>
-      <div class="choose">Choose Photos</div>
-      <div class="small">Select the memories you'd like to share</div>
-    </div>
-
-    <input
-      id="files"
-      type="file"
-      accept="image/*"
-      multiple
-      style="display:none;"
-    >
-
-    <div class="preview" id="preview"></div>
-
-    <button class="upload-btn" onclick="uploadPhotos()">
-      Upload Photos
-    </button>
-
-    <button class="gallery-btn" onclick="window.location.href='gallery.html'">
-      View Gallery
-    </button>
-
-    <div class="status" id="status"></div>
+  <div class="message">
+    Share your favourite memories<br>
+    from our special day
   </div>
 
-  <script>
-    const supabaseUrl = "https://abggbnqgbbwtswdecgtz.supabase.co";
-    const supabaseKey = "sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
+  <div class="upload-box" onclick="document.getElementById('files').click();">
+    <div class="camera">📸</div>
+    <div class="choose">Choose Photos</div>
+    <div class="small">Select the memories you'd like to share</div>
+  </div>
 
-    const client = supabase.createClient(supabaseUrl, supabaseKey);
+  <input id="files" type="file" accept="image/*" multiple style="display:none;">
 
-    let selectedFiles = [];
+  <div class="preview" id="preview"></div>
 
-    document.getElementById("files").addEventListener("change", function(e) {
-      selectedFiles = Array.from(e.target.files);
+  <button class="upload-btn" onclick="uploadPhotos()">Upload Photos</button>
+  <button class="gallery-btn" onclick="window.location.href='gallery.html'">View Gallery</button>
 
-      const preview = document.getElementById("preview");
-      preview.innerHTML = "";
+  <div class="status" id="status"></div>
+</div>
 
-      selectedFiles.forEach(file => {
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(file);
-        preview.appendChild(img);
-      });
+<script>
+  const supabaseUrl = "https://abggbnqgbbwtswdecgtz.supabase.co";
+  const supabaseKey = "sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
+  const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+  let selectedFiles = [];
+
+  document.getElementById("files").addEventListener("change", function(e) {
+    selectedFiles = Array.from(e.target.files);
+    const preview = document.getElementById("preview");
+    preview.innerHTML = "";
+
+    selectedFiles.forEach(file => {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      preview.appendChild(img);
     });
+  });
 
-    async function uploadPhotos() {
-      const status = document.getElementById("status");
+  async function uploadPhotos() {
+    const status = document.getElementById("status");
 
-      if (selectedFiles.length === 0) {
-        status.innerHTML = "Please choose photos first.";
+    if (selectedFiles.length === 0) {
+      status.innerHTML = "Please choose photos first.";
+      return;
+    }
+
+    status.innerHTML = "Uploading photos...";
+
+    let uploaded = 0;
+
+    for (const file of selectedFiles) {
+      const filename = Date.now() + "-" + file.name;
+
+      const { error } = await client
+        .storage
+        .from("wedding-media")
+        .upload("wedding/" + filename, file);
+
+      if (error) {
+        console.log(error);
+        status.innerHTML = "Upload failed";
         return;
       }
 
-      status.innerHTML = "Uploading photos...";
-
-      let uploaded = 0;
-
-      for (const file of selectedFiles) {
-        const filename = Date.now() + "-" + file.name;
-
-        const { error } = await client
-          .storage
-          .from("wedding-media")
-          .upload("wedding/" + filename, file);
-
-        if (error) {
-          console.log(error);
-          status.innerHTML = "Upload failed";
-          return;
-        }
-
-        uploaded++;
-      }
-
-status.innerHTML = "✨ " + uploaded + " photos uploaded successfully! You can now view them in the gallery.";
-
-      selectedFiles = [];
-      document.getElementById("preview").innerHTML = "";
-      document.getElementById("files").value = "";
+      uploaded++;
     }
-  </script>
+
+    status.innerHTML = "✨ " + uploaded + " photos uploaded successfully! You can now view them in the gallery.";
+
+    selectedFiles = [];
+    document.getElementById("preview").innerHTML = "";
+    document.getElementById("files").value = "";
+  }
+</script>
+
 </body>
 </html>
