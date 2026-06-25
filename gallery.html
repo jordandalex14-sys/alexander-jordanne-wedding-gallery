@@ -21,7 +21,7 @@
       opacity: 0.8;
     }
 
-    /* 🏠 GRID */
+    /* 🏠 GRID VIEW */
     .grid {
       column-count: 3;
       column-gap: 12px;
@@ -49,17 +49,17 @@
       cursor: pointer;
     }
 
-    /* 📱 FULL SCREEN VIEW */
+    /* 📱 FULLSCREEN VIEWER */
     .viewer {
       position: fixed;
       inset: 0;
       display: none;
       z-index: 100;
-      overflow: hidden;
       background: black;
+      overflow: hidden;
     }
 
-    /* 🌫️ BLURRED BACKGROUND */
+    /* 🌫️ blurred background */
     .bg {
       position: absolute;
       inset: 0;
@@ -70,25 +70,41 @@
       opacity: 0.6;
     }
 
-    /* dark overlay */
     .overlay {
       position: absolute;
       inset: 0;
       background: rgba(0,0,0,0.35);
     }
 
-    /* main image */
-    .main {
+    /* 🖼️ swipe container */
+    .swipe {
       position: relative;
       z-index: 2;
       height: 100%;
+      width: 100%;
+      display: flex;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+
+    .swipe::-webkit-scrollbar {
+      display: none;
+    }
+
+    .slide {
+      min-width: 100vw;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      scroll-snap-align: center;
       padding: 20px;
+      box-sizing: border-box;
     }
 
-    .main img {
+    .slide img {
       max-width: 95%;
       max-height: 85%;
       object-fit: contain;
@@ -105,34 +121,6 @@
       cursor: pointer;
       z-index: 10;
     }
-
-    .nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 40px;
-      cursor: pointer;
-      z-index: 10;
-      padding: 20px;
-      user-select: none;
-    }
-
-    .left { left: 0; }
-    .right { right: 0; }
-
-    /* slideshow button */
-    .slideshow-btn {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 8px 14px;
-      border: 1px solid white;
-      background: rgba(255,255,255,0.1);
-      cursor: pointer;
-      font-size: 12px;
-      z-index: 10;
-    }
   </style>
 </head>
 
@@ -144,7 +132,7 @@
 
 <div class="grid" id="grid"></div>
 
-<!-- 📱 FULLSCREEN VIEWER -->
+<!-- 📱 FULLSCREEN VIEW -->
 <div class="viewer" id="viewer">
 
   <div class="bg" id="bg"></div>
@@ -152,16 +140,8 @@
 
   <div class="close" onclick="closeViewer()">✕</div>
 
-  <div class="nav left" onclick="prev()">‹</div>
-  <div class="nav right" onclick="next()">›</div>
-
-  <div class="main">
-    <img id="mainImg" />
-  </div>
-
-  <div class="slideshow-btn" onclick="toggleSlideshow()">
-    🎬 Slideshow
-  </div>
+  <!-- 👆 SWIPE AREA -->
+  <div class="swipe" id="swipe"></div>
 
 </div>
 
@@ -172,8 +152,6 @@
   const client = supabase.createClient(supabaseUrl, supabaseKey);
 
   let images = [];
-  let index = 0;
-  let slideshow = null;
 
   async function loadGallery() {
     const grid = document.getElementById("grid");
@@ -211,49 +189,49 @@
     });
   }
 
-  function openViewer(i) {
-    index = i;
-    document.getElementById("viewer").style.display = "block";
-    update();
+  function openViewer(startIndex) {
+    const viewer = document.getElementById("viewer");
+    const swipe = document.getElementById("swipe");
+
+    swipe.innerHTML = "";
+
+    images.forEach(url => {
+      const slide = document.createElement("div");
+      slide.className = "slide";
+
+      const img = document.createElement("img");
+      img.src = url;
+
+      slide.appendChild(img);
+      swipe.appendChild(slide);
+    });
+
+    viewer.style.display = "block";
+
+    updateBackground();
+
+    setTimeout(() => {
+      swipe.scrollTo({
+        left: startIndex * window.innerWidth,
+        behavior: "instant"
+      });
+    }, 50);
+
+    swipe.onscroll = () => updateBackground();
+  }
+
+  function updateBackground() {
+    const swipe = document.getElementById("swipe");
+    const bg = document.getElementById("bg");
+
+    const index = Math.round(swipe.scrollLeft / window.innerWidth);
+    if (images[index]) {
+      bg.style.backgroundImage = `url('${images[index]}')`;
+    }
   }
 
   function closeViewer() {
     document.getElementById("viewer").style.display = "none";
-    stopSlideshow();
-  }
-
-  function update() {
-    const img = images[index];
-
-    document.getElementById("mainImg").src = img;
-    document.getElementById("bg").style.backgroundImage = `url('${img}')`;
-  }
-
-  function next() {
-    index = (index + 1) % images.length;
-    update();
-  }
-
-  function prev() {
-    index = (index - 1 + images.length) % images.length;
-    update();
-  }
-
-  /* 🎬 SLIDESHOW */
-  function toggleSlideshow() {
-    if (slideshow) {
-      stopSlideshow();
-      return;
-    }
-
-    slideshow = setInterval(() => {
-      next();
-    }, 3000);
-  }
-
-  function stopSlideshow() {
-    clearInterval(slideshow);
-    slideshow = null;
   }
 
   loadGallery();
