@@ -6,11 +6,12 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: "Arial", sans-serif;
       color: white;
+      overflow: hidden;
     }
 
-    /* 🌄 Background */
+    /* 🌄 Cinematic background */
     .hero {
       height: 100vh;
       width: 100%;
@@ -22,35 +23,48 @@
       align-items: center;
       text-align: center;
       position: relative;
-      animation: zoom 20s ease-in-out infinite alternate;
+      animation: zoom 25s ease-in-out infinite alternate;
     }
 
-    /* 🌫️ Overlay */
+    /* 🌫️ luxury dark + blur overlay */
     .overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(4px);
     }
 
-    /* Content wrapper */
+    /* 💎 glass panel */
     .content {
       position: relative;
       z-index: 2;
+
+      padding: 50px 40px;
+      border-radius: 20px;
+
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+
+      backdrop-filter: blur(12px);
 
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+
       text-align: center;
 
-      padding: 20px;
+      max-width: 650px;
+
+      animation: fadeIn 1.2s ease forwards;
     }
 
     h1 {
       font-size: 64px;
       font-weight: 300;
       margin: 0;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+      letter-spacing: -1px;
+      text-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
 
     .date {
@@ -61,13 +75,15 @@
 
     .subtitle {
       margin-top: 25px;
-      max-width: 520px;
+      max-width: 500px;
       line-height: 1.6;
       opacity: 0.9;
+      font-size: 15px;
     }
 
+    /* 🎯 luxury buttons */
     .buttons {
-      margin-top: 40px;
+      margin-top: 35px;
       display: flex;
       gap: 15px;
       flex-wrap: wrap;
@@ -76,33 +92,60 @@
 
     .btn {
       padding: 14px 28px;
-      border: 1px solid white;
-      background: transparent;
+      border: 1px solid rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.05);
       color: white;
       cursor: pointer;
-      transition: 0.25s;
+      transition: 0.3s ease;
       min-width: 160px;
-      font-size: 15px;
+      font-size: 14px;
+      border-radius: 10px;
+      backdrop-filter: blur(6px);
     }
 
     .btn:hover {
       background: white;
       color: black;
+      transform: translateY(-2px);
     }
 
     .footer {
       position: absolute;
       bottom: 20px;
-      font-size: 12px;
-      opacity: 0.7;
-      letter-spacing: 2px;
+      font-size: 11px;
+      opacity: 0.6;
+      letter-spacing: 3px;
       z-index: 2;
     }
 
-    /* 🎞️ slow cinematic zoom */
+    /* 🎞️ background motion */
     @keyframes zoom {
       from { transform: scale(1); }
-      to { transform: scale(1.05); }
+      to { transform: scale(1.06); }
+    }
+
+    /* ✨ fade-in */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 📱 mobile tuning */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 42px;
+      }
+
+      .content {
+        margin: 20px;
+        padding: 30px 20px;
+      }
     }
   </style>
 </head>
@@ -121,7 +164,7 @@
 
     <div class="subtitle">
       Welcome to our wedding gallery.<br>
-      Share and relive the moments from our special day.
+      A collection of memories from our special day, shared with love.
     </div>
 
     <div class="buttons">
