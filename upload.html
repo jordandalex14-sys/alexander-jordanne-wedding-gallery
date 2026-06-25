@@ -11,7 +11,7 @@
 <style>
 
 * {
-  box-sizing:border-box;
+box-sizing:border-box;
 }
 
 
@@ -39,8 +39,6 @@ padding:20px;
 }
 
 
-
-/* main card */
 
 .container {
 
@@ -104,11 +102,9 @@ opacity:.85;
 
 
 
-/* upload button/card */
+/* upload card */
 
 .upload-box {
-
-position:relative;
 
 margin-top:35px;
 
@@ -141,24 +137,6 @@ transform:translateY(-2px);
 .upload-box:active {
 
 transform:scale(.97);
-
-}
-
-
-
-/* remove weird input box */
-
-.upload-box input {
-
-position:absolute;
-
-opacity:0;
-
-width:0;
-
-height:0;
-
-overflow:hidden;
 
 }
 
@@ -224,7 +202,7 @@ border-radius:14px;
 
 
 
-/* upload button */
+/* button */
 
 button {
 
@@ -245,8 +223,6 @@ color:black;
 font-size:15px;
 
 cursor:pointer;
-
-transition:.3s;
 
 }
 
@@ -273,9 +249,7 @@ opacity:.85;
 
 
 
-
 @media(max-width:600px){
-
 
 .container {
 
@@ -290,14 +264,13 @@ font-size:34px;
 
 }
 
-
 }
-
 
 
 </style>
 
 </head>
+
 
 
 <body>
@@ -328,7 +301,11 @@ from our special day
 
 
 
-<label class="upload-box">
+<!-- CLICKABLE UPLOAD CARD -->
+
+<div 
+class="upload-box"
+onclick="document.getElementById('files').click();">
 
 
 <div class="camera">
@@ -346,18 +323,17 @@ Select the memories you'd like to share
 </div>
 
 
+</div>
+
+
+
 <input
-
 id="files"
-
 type="file"
-
 accept="image/*"
+multiple
+style="display:none;">
 
-multiple>
-
-
-</label>
 
 
 
@@ -386,7 +362,6 @@ Upload Photos
 
 
 
-
 <script>
 
 
@@ -396,6 +371,7 @@ const supabaseUrl =
 
 const supabaseKey =
 "sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
+
 
 
 const client =
@@ -422,6 +398,7 @@ Array.from(e.target.files);
 
 const preview =
 document.getElementById("preview");
+
 
 preview.innerHTML="";
 
@@ -451,7 +428,6 @@ preview.appendChild(img);
 
 
 
-
 async function uploadPhotos(){
 
 
@@ -461,7 +437,6 @@ document.getElementById("status");
 
 
 if(selectedFiles.length===0){
-
 
 status.innerHTML =
 "Please choose photos first.";
@@ -484,7 +459,9 @@ let uploaded=0;
 for(const file of selectedFiles){
 
 
+
 const filename =
+
 Date.now()
 +
 "-"
@@ -521,9 +498,7 @@ status.innerHTML =
 
 return;
 
-
 }
-
 
 
 uploaded++;
@@ -534,8 +509,8 @@ uploaded++;
 
 
 
-
 status.innerHTML =
+
 "✨ "
 +
 uploaded
