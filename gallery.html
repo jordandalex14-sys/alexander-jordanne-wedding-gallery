@@ -43,7 +43,6 @@
       margin-bottom: 12px;
       border-radius: 8px;
       overflow: hidden;
-      background: #f5f5f5;
     }
 
     img {
@@ -53,16 +52,57 @@
       transition: 0.2s;
     }
 
-    img.selected {
-      outline: 4px solid black;
-      transform: scale(0.98);
-      opacity: 0.85;
+    img:hover {
+      opacity: 0.9;
     }
 
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #666;
+    /* LIGHTBOX */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 999;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      object-fit: contain;
+    }
+
+    .controls {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 0 20px;
+      box-sizing: border-box;
+      color: white;
+      font-size: 40px;
+      user-select: none;
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .nav {
+      cursor: pointer;
+      padding: 10px;
     }
   </style>
 </head>
@@ -71,11 +111,23 @@
 
 <header>
   <h1>Gallery</h1>
-  <p>Alexander & Jordanne • 08.08.26 • Tap to select photos 📸</p>
+  <p>Alexander & Jordanne • 08.08.26</p>
 </header>
 
 <div id="gallery" class="grid">
-  <div class="loading">Loading memories...</div>
+  <div>Loading memories...</div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="close" onclick="closeLightbox()">✕</div>
+
+  <div class="controls">
+    <div class="nav" onclick="prevImage()">‹</div>
+    <div class="nav" onclick="nextImage()">›</div>
+  </div>
+
+  <img id="lightboxImg" />
 </div>
 
 <script>
@@ -84,9 +136,34 @@
 
   const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-  function toggleSelect(img) {
-    img.classList.toggle("selected");
+  let images = [];
+  let currentIndex = 0;
+
+  function openLightbox(index) {
+    currentIndex = index;
+    document.getElementById("lightbox").style.display = "flex";
+    document.getElementById("lightboxImg").src = images[index];
   }
+
+  function closeLightbox() {
+    document.getElementById("lightbox").style.display = "none";
+  }
+
+  function nextImage() {
+    currentIndex = (currentIndex + 1) % images.length;
+    document.getElementById("lightboxImg").src = images[currentIndex];
+  }
+
+  function prevImage() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    document.getElementById("lightboxImg").src = images[currentIndex];
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowRight") nextImage();
+    if (e.key === "ArrowLeft") prevImage();
+  });
 
   async function loadGallery() {
     const container = document.getElementById("gallery");
@@ -105,30 +182,30 @@
     }
 
     container.innerHTML = "";
+    images = [];
 
-    for (let file of data) {
-
+    data.forEach((file, index) => {
       const { data: urlData } = client
         .storage
         .from("wedding-media")
         .getPublicUrl("wedding/" + file.name);
 
       const url = urlData.publicUrl;
+      images.push(url);
 
       const div = document.createElement("div");
       div.className = "item";
 
       const img = document.createElement("img");
       img.src = url;
-      img.onclick = () => toggleSelect(img);
+      img.onclick = () => openLightbox(index);
 
       div.appendChild(img);
       container.appendChild(div);
-    }
+    });
   }
 
   loadGallery();
-
   setInterval(loadGallery, 10000);
 </script>
 
