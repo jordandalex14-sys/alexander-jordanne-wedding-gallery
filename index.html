@@ -1,81 +1,125 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Alexander & Jordanne | Wedding Gallery</title>
+  <title>Alexander & Jordanne | Wedding Gallery</title>
 
-<style>
-body {
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background:#ffffff;
-  color:#111;
-  text-align:center;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-.container {
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  padding:30px;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      text-align: center;
+    }
 
-h1 {
-  font-size:60px;
-  font-weight:300;
-  letter-spacing:-2px;
-}
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
 
-.date {
-  letter-spacing:8px;
-  margin-top:20px;
-}
+    h1 {
+      font-size: 56px;
+      font-weight: 300;
+    }
 
-p {
-  color:#666;
-  max-width:450px;
-  line-height:1.6;
-}
+    .date {
+      letter-spacing: 6px;
+      margin-top: 10px;
+    }
 
-button {
-  margin-top:30px;
-  padding:15px 40px;
-  background:white;
-  border:1px solid black;
-  cursor:pointer;
-  font-size:16px;
-}
+    p {
+      color: #666;
+      max-width: 420px;
+      line-height: 1.5;
+      margin-top: 20px;
+    }
 
-button:hover {
-  background:black;
-  color:white;
-}
+    input {
+      margin-top: 25px;
+    }
 
-</style>
+    button {
+      margin-top: 20px;
+      padding: 12px 28px;
+      border: 1px solid black;
+      background: white;
+      cursor: pointer;
+    }
 
+    button:hover {
+      background: black;
+      color: white;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>Alexander & Jordanne</h1>
+  <h1>Alexander & Jordanne</h1>
+  <div class="date">08.08.26</div>
 
-<div class="date">
-08.08.26
+  <p>
+    Share your favourite moments from our wedding day.
+    Upload your photos and videos below 🤍
+  </p>
+
+  <input type="file" id="fileInput" multiple accept="image/*,video/*" />
+
+  <button onclick="uploadFiles()">Upload Memories</button>
+
+  <div id="status"></div>
+
 </div>
 
-<p>
-Share your favourite moments from our wedding day.
-Upload your photos and videos so we can keep every memory.
-</p>
+<script>
+  const supabaseUrl = "https://abggbnqgbbwtswdecgtz.supabase.co";
+  const supabaseKey = "sb_publishable_RHFh1DWp1TbpqmbGYx6x3Q_4uNH7cHh";
 
-<button>
-Upload Memories
-</button>
+  const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-</div>
+  async function uploadFiles() {
+    const files = document.getElementById("fileInput").files;
+    const status = document.getElementById("status");
+
+    if (!files.length) {
+      status.innerText = "Please select files first.";
+      return;
+    }
+
+    status.innerText = "Uploading...";
+
+    for (let file of files) {
+      const filePath = `wedding/${Date.now()}-${file.name}`;
+
+      const { error } = await client.storage
+        .from("wedding-media")
+        .upload(filePath, file);
+
+      if (error) {
+        console.log(error);
+        status.innerText = "Upload failed ❌";
+        return;
+      }
+    }
+
+    status.innerText = "Upload complete ❤️ Thank you!";
+    document.getElementById("fileInput").value = "";
+  }
+</script>
 
 </body>
 </html>
