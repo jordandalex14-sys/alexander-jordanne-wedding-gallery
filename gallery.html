@@ -9,26 +9,26 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0b0b0b;
+      background: #000;
       color: white;
     }
 
     header {
       text-align: center;
-      padding: 20px;
+      padding: 18px;
       font-size: 13px;
       letter-spacing: 2px;
       opacity: 0.8;
     }
 
-    /* 🏠 HOME GRID */
+    /* 🏠 GRID */
     .grid {
       column-count: 3;
       column-gap: 12px;
       padding: 12px;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 800px) {
       .grid { column-count: 2; }
     }
 
@@ -38,73 +38,100 @@
 
     .item {
       margin-bottom: 12px;
-      break-inside: avoid;
       border-radius: 12px;
       overflow: hidden;
+      break-inside: avoid;
     }
 
     .item img {
       width: 100%;
       display: block;
       cursor: pointer;
-      transition: transform 0.2s ease;
     }
 
-    .item img:active {
-      transform: scale(0.98);
-    }
-
-    /* 📱 SWIPE VIEW (hidden until opened) */
+    /* 📱 FULL SCREEN VIEW */
     .viewer {
       position: fixed;
       inset: 0;
-      background: black;
       display: none;
-      overflow-x: scroll;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
       z-index: 100;
+      overflow: hidden;
+      background: black;
     }
 
-    .viewer::-webkit-scrollbar {
-      display: none;
+    /* 🌫️ BLURRED BACKGROUND */
+    .bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(30px);
+      transform: scale(1.2);
+      opacity: 0.6;
     }
 
-    .slide {
-      min-width: 100vw;
-      height: 100vh;
+    /* dark overlay */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+    }
+
+    /* main image */
+    .main {
+      position: relative;
+      z-index: 2;
+      height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      scroll-snap-align: center;
       padding: 20px;
-      box-sizing: border-box;
     }
 
-    .slide img {
+    .main img {
       max-width: 95%;
       max-height: 85%;
       object-fit: contain;
       border-radius: 14px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     }
 
-    /* close button */
+    /* controls */
     .close {
-      position: fixed;
+      position: absolute;
       top: 15px;
       right: 20px;
       font-size: 26px;
-      z-index: 200;
       cursor: pointer;
-      color: white;
+      z-index: 10;
     }
 
-    .hint {
-      text-align: center;
+    .nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 40px;
+      cursor: pointer;
+      z-index: 10;
+      padding: 20px;
+      user-select: none;
+    }
+
+    .left { left: 0; }
+    .right { right: 0; }
+
+    /* slideshow button */
+    .slideshow-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px 14px;
+      border: 1px solid white;
+      background: rgba(255,255,255,0.1);
+      cursor: pointer;
       font-size: 12px;
-      opacity: 0.6;
-      padding-bottom: 10px;
+      z-index: 10;
     }
   </style>
 </head>
@@ -112,19 +139,30 @@
 <body>
 
 <header>
-  Alexander & Jordanne • Wedding Gallery
+  Wedding Gallery • Alexander & Jordanne
 </header>
 
-<div class="hint">
-  Tap a photo to view full screen
-</div>
-
-<!-- 🏠 GRID VIEW -->
 <div class="grid" id="grid"></div>
 
-<!-- 📱 SWIPE VIEW -->
+<!-- 📱 FULLSCREEN VIEWER -->
 <div class="viewer" id="viewer">
+
+  <div class="bg" id="bg"></div>
+  <div class="overlay"></div>
+
   <div class="close" onclick="closeViewer()">✕</div>
+
+  <div class="nav left" onclick="prev()">‹</div>
+  <div class="nav right" onclick="next()">›</div>
+
+  <div class="main">
+    <img id="mainImg" />
+  </div>
+
+  <div class="slideshow-btn" onclick="toggleSlideshow()">
+    🎬 Slideshow
+  </div>
+
 </div>
 
 <script>
@@ -134,6 +172,8 @@
   const client = supabase.createClient(supabaseUrl, supabaseKey);
 
   let images = [];
+  let index = 0;
+  let slideshow = null;
 
   async function loadGallery() {
     const grid = document.getElementById("grid");
@@ -149,7 +189,7 @@
     grid.innerHTML = "";
     images = [];
 
-    data.forEach((file, index) => {
+    data.forEach((file, i) => {
 
       const { data: urlData } = client
         .storage
@@ -164,42 +204,56 @@
 
       const img = document.createElement("img");
       img.src = url;
-
-      img.onclick = () => openViewer(index);
+      img.onclick = () => openViewer(i);
 
       div.appendChild(img);
       grid.appendChild(div);
     });
   }
 
-  function openViewer(startIndex) {
-    const viewer = document.getElementById("viewer");
-    viewer.innerHTML = '<div class="close" onclick="closeViewer()">✕</div>';
-
-    images.forEach(url => {
-      const slide = document.createElement("div");
-      slide.className = "slide";
-
-      const img = document.createElement("img");
-      img.src = url;
-
-      slide.appendChild(img);
-      viewer.appendChild(slide);
-    });
-
-    viewer.style.display = "flex";
-
-    // jump to selected image
-    setTimeout(() => {
-      viewer.scrollTo({
-        left: startIndex * window.innerWidth,
-        behavior: "instant"
-      });
-    }, 50);
+  function openViewer(i) {
+    index = i;
+    document.getElementById("viewer").style.display = "block";
+    update();
   }
 
   function closeViewer() {
     document.getElementById("viewer").style.display = "none";
+    stopSlideshow();
+  }
+
+  function update() {
+    const img = images[index];
+
+    document.getElementById("mainImg").src = img;
+    document.getElementById("bg").style.backgroundImage = `url('${img}')`;
+  }
+
+  function next() {
+    index = (index + 1) % images.length;
+    update();
+  }
+
+  function prev() {
+    index = (index - 1 + images.length) % images.length;
+    update();
+  }
+
+  /* 🎬 SLIDESHOW */
+  function toggleSlideshow() {
+    if (slideshow) {
+      stopSlideshow();
+      return;
+    }
+
+    slideshow = setInterval(() => {
+      next();
+    }, 3000);
+  }
+
+  function stopSlideshow() {
+    clearInterval(slideshow);
+    slideshow = null;
   }
 
   loadGallery();
